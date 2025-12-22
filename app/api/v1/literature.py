@@ -82,7 +82,6 @@ async def check_grammar(
         errors = result.data.get("errors", [])
 
         # 为缺少 id 的错误生成唯一 ID
-        import uuid
         for i, error in enumerate(errors):
             if "id" not in error or not error.get("id"):
                 error["id"] = f"err_{uuid.uuid4().hex[:8]}_{i}"
