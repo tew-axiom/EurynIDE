@@ -6,6 +6,10 @@ set -e
 
 echo "🚀 开始 Railway 部署初始化..."
 
+# 设置 Python 路径
+export PYTHONPATH=/app:$PYTHONPATH
+echo "📍 PYTHONPATH 设置为: $PYTHONPATH"
+
 # 等待数据库就绪
 echo "⏳ 等待数据库连接..."
 python -c "
@@ -13,6 +17,10 @@ import asyncio
 import asyncpg
 import os
 import time
+import sys
+
+# 确保可以导入 app 模块
+sys.path.insert(0, '/app')
 
 async def wait_for_db():
     db_url = os.getenv('DATABASE_URL', '')
@@ -46,6 +54,6 @@ asyncio.run(wait_for_db())
 
 # 运行数据库迁移
 echo "📦 运行数据库迁移..."
-alembic upgrade head
+cd /app && alembic upgrade head
 
 echo "✅ Railway 初始化完成！"
