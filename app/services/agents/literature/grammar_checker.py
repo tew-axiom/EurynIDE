@@ -140,6 +140,8 @@ class GrammarCheckerAgent(BaseAgent):
         """
         解析AI响应
 
+        自动为每个错误生成唯一ID
+
         Args:
             response: AI响应文本
 
