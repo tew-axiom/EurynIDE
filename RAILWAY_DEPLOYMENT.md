@@ -60,11 +60,15 @@ JWT_SECRET_KEY=your-random-jwt-secret-change-this-in-production
 JWT_ALGORITHM=HS256
 JWT_EXPIRE_MINUTES=1440
 
-# CORS 配置
+# CORS 配置（根据你的前端域名修改）
+# 方式1: 允许所有来源（仅用于开发/测试）
 CORS_ORIGINS=*
-CORS_ALLOW_CREDENTIALS=true
-CORS_ALLOW_METHODS=*
-CORS_ALLOW_HEADERS=*
+
+# 方式2: 指定单个域名
+# CORS_ORIGINS=https://your-frontend.com
+
+# 方式3: 指定多个域名（用逗号分隔）
+# CORS_ORIGINS=https://your-frontend.com,https://www.your-frontend.com,https://app.your-domain.com
 
 # 限流配置
 RATE_LIMIT_PER_MINUTE=60

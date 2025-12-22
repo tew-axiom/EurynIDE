@@ -84,6 +84,35 @@ class Settings(BaseSettings):
         description="允许的CORS源"
     )
 
+    @field_validator("cors_origins", mode="before")
+    @classmethod
+    def parse_cors_origins(cls, v) -> List[str]:
+        """解析CORS源配置
+
+        支持以下格式：
+        - 字符串 "*" -> ["*"]
+        - 逗号分隔字符串 "http://a.com,http://b.com" -> ["http://a.com", "http://b.com"]
+        - JSON数组字符串 '["http://a.com"]' -> ["http://a.com"]
+        - 列表 ["http://a.com"] -> ["http://a.com"]
+        """
+        if isinstance(v, str):
+            # 处理 "*" 的情况
+            if v.strip() == "*":
+                return ["*"]
+            # 处理逗号分隔的情况
+            if "," in v:
+                return [origin.strip() for origin in v.split(",") if origin.strip()]
+            # 处理单个URL的情况
+            if v.strip():
+                return [v.strip()]
+            # 空字符串使用默认值
+            return ["http://localhost:3000", "http://localhost:5173"]
+        # 已经是列表，直接返回
+        if isinstance(v, list):
+            return v
+        # 其他情况使用默认值
+        return ["http://localhost:3000", "http://localhost:5173"]
+
     # 限流配置
     rate_limit_per_minute: int = Field(default=60, description="每分钟请求限制")
     rate_limit_burst: int = Field(default=10, description="突发请求限制")
