@@ -50,13 +50,27 @@ class Settings(BaseSettings):
     @field_validator("qwen_api_key")
     @classmethod
     def validate_qwen_api_key(cls, v: str) -> str:
-        """验证Qwen API密钥"""
+        """验证Qwen API密钥
+
+        注意：在生产环境中，如果未设置会发出警告但不会阻止启动
+        这样可以让应用先启动，然后在实际调用 API 时再检查
+        """
         if not v or v == "":
-            raise ValueError(
-                "QWEN_API_KEY环境变量未设置。"
-                "请在.env文件中设置: QWEN_API_KEY=your-api-key"
-            )
-        if not v.startswith("sk-"):
+            # 在生产环境中只警告，不阻止启动
+            import os
+            if os.getenv("ENVIRONMENT") == "production":
+                import warnings
+                warnings.warn(
+                    "QWEN_API_KEY 未设置。API 调用将会失败。"
+                    "请在 Railway 环境变量中设置 QWEN_API_KEY"
+                )
+                return ""  # 返回空字符串，允许启动
+            else:
+                raise ValueError(
+                    "QWEN_API_KEY环境变量未设置。"
+                    "请在.env文件中设置: QWEN_API_KEY=your-api-key"
+                )
+        if v and not v.startswith("sk-"):
             raise ValueError("Qwen API密钥格式不正确，应以'sk-'开头")
         return v
     qwen_api_base: str = Field(

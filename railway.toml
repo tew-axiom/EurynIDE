@@ -3,7 +3,7 @@ builder = "DOCKERFILE"
 dockerfilePath = "Dockerfile"
 
 [deploy]
-startCommand = "bash scripts/railway_init.sh && uvicorn app.main:app --host 0.0.0.0 --port $PORT"
+startCommand = "bash scripts/railway_init.sh && uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8000}"
 restartPolicyType = "ON_FAILURE"
 restartPolicyMaxRetries = 10
 healthcheckPath = "/health"

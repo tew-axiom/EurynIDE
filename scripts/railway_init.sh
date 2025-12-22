@@ -57,3 +57,4 @@ echo "📦 运行数据库迁移..."
 cd /app && alembic upgrade head
 
 echo "✅ Railway 初始化完成！"
+echo "🚀 准备启动应用..."
