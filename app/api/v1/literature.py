@@ -78,6 +78,15 @@ async def check_grammar(
                 detail=f"语法检查失败: {result.error}"
             )
 
+        # 获取错误列表并确保每个错误都有 id 字段
+        errors = result.data.get("errors", [])
+
+        # 为缺少 id 的错误生成唯一 ID
+        import uuid
+        for i, error in enumerate(errors):
+            if "id" not in error or not error.get("id"):
+                error["id"] = f"err_{uuid.uuid4().hex[:8]}_{i}"
+
         # 获取内容版本和哈希
         import hashlib
         from app.cache.cache_strategies import session_cache
@@ -100,7 +109,7 @@ async def check_grammar(
         )
 
         return GrammarCheckResponse(
-            errors=result.data.get("errors", []),
+            errors=errors,
             processing_time_ms=int(result.metadata.get("execution_time_ms", 0)),
             from_cache=result.metadata.get("from_cache", False)
         )
