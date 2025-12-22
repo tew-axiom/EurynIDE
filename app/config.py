@@ -3,7 +3,7 @@
 使用 Pydantic Settings 进行配置管理和验证
 """
 
-from typing import List, Optional
+from typing import List, Optional, Union
 from pydantic import Field, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
@@ -79,9 +79,10 @@ class Settings(BaseSettings):
     access_token_expire_minutes: int = Field(default=30, description="访问令牌过期时间(分钟)")
 
     # CORS配置
-    cors_origins: List[str] = Field(
-        default=["http://localhost:3000", "http://localhost:5173"],
-        description="允许的CORS源"
+    # 使用 Union[str, List[str]] 来接受字符串或列表
+    cors_origins: Union[str, List[str]] = Field(
+        default="http://localhost:3000,http://localhost:5173",
+        description="允许的CORS源（可以是逗号分隔的字符串或列表）"
     )
 
     @field_validator("cors_origins", mode="before")
@@ -92,7 +93,6 @@ class Settings(BaseSettings):
         支持以下格式：
         - 字符串 "*" -> ["*"]
         - 逗号分隔字符串 "http://a.com,http://b.com" -> ["http://a.com", "http://b.com"]
-        - JSON数组字符串 '["http://a.com"]' -> ["http://a.com"]
         - 列表 ["http://a.com"] -> ["http://a.com"]
         """
         if isinstance(v, str):
